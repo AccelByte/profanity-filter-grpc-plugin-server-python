@@ -394,6 +394,8 @@ $RECYCLE.BIN/
 
 # Cache dir
 .cache/
+.local/
+.docker/
 
 # Virtual Environments
 venv*/

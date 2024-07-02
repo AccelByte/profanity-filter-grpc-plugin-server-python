@@ -22,7 +22,7 @@ from accelbyte_grpc_plugin_tests import create_server
 class AsyncProfanityFilterServiceTestCase(IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         self.service = AsyncProfanityFilterService(
-            extra_profane_word_dictionaries={"en": {"feck"}}
+            extra_profane_word_dictionaries={"en": {"bad"}}
         )
 
     async def test_connection(self):
@@ -49,7 +49,7 @@ class AsyncProfanityFilterServiceTestCase(IsolatedAsyncioTestCase):
     async def test_validate(self):
         # arrange 1
         request = ExtendProfanityValidationRequest()
-        request.value = "feck"
+        request.value = "bad"
 
         # act 1
         response = await self.service.Validate(request, None)

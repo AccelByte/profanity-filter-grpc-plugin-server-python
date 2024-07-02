@@ -66,7 +66,7 @@ fi
 
 
 echo Test with bad word ...
-api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"feck\"}"
+api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"bad\"}"
 echo
 
 if [ "$(cat api_curl_http_code.out)" -ge "400" ]; then

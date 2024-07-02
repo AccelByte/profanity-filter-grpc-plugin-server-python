@@ -1,4 +1,4 @@
-# Copyright (c) 2024 AccelByte Inc. All Rights Reserved.
+# Copyright (c) 2023 AccelByte Inc. All Rights Reserved.
 # This is licensed software from AccelByte Inc, for limitations
 # and restrictions contact your company contract manager.
 
@@ -39,6 +39,7 @@ class AuthorizationServerInterceptor(ServerInterceptor):
         if method in self.whitelisted_methods:
             return await continuation(handler_call_details)
 
+        # noinspection PyUnresolvedReferences
         authorization = next(
             (
                 metadata.value
@@ -58,8 +59,6 @@ class AuthorizationServerInterceptor(ServerInterceptor):
             token = authorization.removeprefix("Bearer ")
             error = self.token_validator.validate_token(
                 token=token,
-                resource=self.resource,
-                action=self.action,
                 namespace=self.namespace,
             )
             if error is not None:
@@ -93,3 +92,8 @@ class AuthorizationServerInterceptor(ServerInterceptor):
             details=error,
             debug_error_string=error,
         )
+
+
+__all__ = [
+    "AuthorizationServerInterceptor",
+]
