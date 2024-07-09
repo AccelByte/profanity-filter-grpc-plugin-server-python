@@ -16,7 +16,7 @@ if [ -z "$GRPC_SERVER_URL" ] && [ -z "$EXTEND_APP_NAME" ]; then
   exit 1
 fi
 
-DEMO_PREFIX='profanity_filter_grpc_demo'
+FILTER_NAME="pf_grpc_demo-$(echo $RANDOM | sha1sum | head -c 8)"
 
 api_curl()
 {
@@ -28,7 +28,7 @@ api_curl()
 clean_up()
 {
   echo Deleting profanity filter ...
-  curl -X DELETE "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}" -H "Authorization: Bearer $ACCESS_TOKEN"
+  curl -X DELETE "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${FILTER_NAME}" -H "Authorization: Bearer $ACCESS_TOKEN"
 }
 
 ACCESS_TOKEN="$(api_curl ${AB_BASE_URL}/iam/v3/oauth/token \
@@ -44,17 +44,17 @@ fi
 trap clean_up EXIT
 
 if [ -n "$GRPC_SERVER_URL" ]; then
-  echo Creating custom profanity filter URL
-  api_curl  -X PUT -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"description\":\"test\",\"filterConfig\":{\"customServerConfig\":{\"gRPCServerAddress\":\"${GRPC_SERVER_URL}\"},\"type\":\"EXTEND_CUSTOM_SERVER\"}}" >/dev/null
-  echo
+  echo Creating custom profanity filter URL: $GRPC_SERVER_URL
+  api_curl  -X PUT -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${FILTER_NAME}" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"description\":\"test\",\"filterConfig\":{\"customServerConfig\":{\"gRPCServerAddress\":\"${GRPC_SERVER_URL}\"},\"type\":\"EXTEND_CUSTOM_SERVER\"}}" >/dev/null
+  echo 
 
   if [ "$(cat api_curl_http_code.out)" -ge "400" ]; then
     exit 1
   fi
 elif [ -n "$EXTEND_APP_NAME" ]; then
-  echo Creating custom profanity filter app name
-  api_curl  -X PUT -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"description\":\"test\",\"filterConfig\":{\"appConfig\":{\"appName\":\"${EXTEND_APP_NAME}\"},\"type\":\"EXTEND_APP\"}}" >/dev/null
-  echo
+  echo Creating custom profanity filter app name: $EXTEND_APP_NAME
+  api_curl  -X PUT -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${FILTER_NAME}" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"description\":\"test\",\"filterConfig\":{\"appConfig\":{\"appName\":\"${EXTEND_APP_NAME}\"},\"type\":\"EXTEND_APP\"}}" >/dev/null
+  echo 
 
   if [ "$(cat api_curl_http_code.out)" -ge "400" ]; then
     exit 1
@@ -64,9 +64,8 @@ else
   exit 1
 fi
 
-
 echo Test with bad word ...
-api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"bad\"}"
+api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${FILTER_NAME}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"bad\"}"
 echo
 
 if [ "$(cat api_curl_http_code.out)" -ge "400" ]; then
@@ -78,7 +77,7 @@ if [ "$(jq .isProfane api_curl_http_response.out)" != 'true' ]; then
 fi
 
 echo Test with normal word ...
-api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${DEMO_PREFIX}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"hello\"}"
+api_curl -X POST -s "${AB_BASE_URL}/profanity-filter/v1/admin/namespaces/$AB_NAMESPACE/filters/${FILTER_NAME}/profane" -H "Authorization: Bearer $ACCESS_TOKEN" -H 'Content-Type: application/json' -d "{\"value\":\"hello\"}"
 echo
 
 if [ "$(cat api_curl_http_code.out)" -ge "400" ]; then
