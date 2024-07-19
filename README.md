@@ -184,9 +184,7 @@ The custom functions in this sample app can be tested locally using [postman](ht
 
    > :warning: **If you are running [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies) stack alongside this sample app as mentioned in [Test Observability](#test-observability)**: Enter `localhost:10000` instead of `localhost:6565`. This way, the `gRPC server` will be called via `Envoy` service within `grpc-plugin-dependencies` stack instead of directly.
 
-3. Continue by selecting `ProfanityFilterService/Validate` method and invoke it with the sample message below.
-
-   a. With a `payload`
+3. Continue by selecting `ProfanityFilterService/Validate` method and invoke it with the sample payload below.
 
       ```json
       {
@@ -194,7 +192,7 @@ The custom functions in this sample app can be tested locally using [postman](ht
       }
       ```
 
-   The response will contain `isSuccess: true`
+   The response will contain `isProfane: true`
 
       ```json
       {
