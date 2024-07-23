@@ -80,28 +80,23 @@ async def main(port: int, profanities_file: Optional[str] = None, **kwargs) -> N
     with env.prefixed(prefix="PLUGIN_GRPC_SERVER_AUTH_"):
         if env.bool("ENABLED", False):
             from accelbyte_py_sdk import AccelByteSDK
-            from accelbyte_py_sdk.core import (
-                MyConfigRepository,
-                InMemoryTokenRepository,
-            )
+            from accelbyte_py_sdk.core import MyConfigRepository, InMemoryTokenRepository
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
-            from accelbyte_py_sdk.services.auth import login_client
+            from accelbyte_py_sdk.services.auth import login_client, LoginClientTimer
 
             resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:CHAT:CONFIG")
             action = env.int(
                 "ACTION", int(PermissionAction.READ | PermissionAction.UPDATE)
             )
 
-            config = MyConfigRepository(
-                base_url, client_id, client_secret, namespace=namespace
-            )
+            config = MyConfigRepository(base_url, client_id, client_secret, namespace)
+            token = InMemoryTokenRepository()
             sdk = AccelByteSDK()
-            sdk.initialize(
-                options={"config": config, "token": InMemoryTokenRepository()}
-            )
+            sdk.initialize(options={"config": config, "token": token})
             result, error = login_client(sdk=sdk)
             if error:
                 raise Exception(str(error))
+            sdk.timer = LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
             token_validator = CachingTokenValidator(sdk)
             auth_server_interceptor = AuthorizationServerInterceptor(
                 resource=resource,
