@@ -84,10 +84,8 @@ async def main(port: int, profanities_file: Optional[str] = None, **kwargs) -> N
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
             from accelbyte_py_sdk.services.auth import login_client, LoginClientTimer
 
-            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:CHAT:CONFIG")
-            action = env.int(
-                "ACTION", int(PermissionAction.READ | PermissionAction.UPDATE)
-            )
+            resource = env("RESOURCE", None)
+            action = env.int("ACTION", None)
 
             config = MyConfigRepository(base_url, client_id, client_secret, namespace)
             token = InMemoryTokenRepository()
@@ -99,10 +97,10 @@ async def main(port: int, profanities_file: Optional[str] = None, **kwargs) -> N
             sdk.timer = LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
             token_validator = CachingTokenValidator(sdk)
             auth_server_interceptor = AuthorizationServerInterceptor(
+                token_validator=token_validator,
                 resource=resource,
                 action=action,
                 namespace=namespace,
-                token_validator=token_validator,
             )
             opts.append(AppGRPCInterceptorOpt(auth_server_interceptor))
 
