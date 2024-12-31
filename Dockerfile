@@ -38,4 +38,6 @@ EXPOSE 6565
 # Prometheus /metrics web server port
 EXPOSE 8080
 
-ENTRYPOINT ["python", "-m", "app", "-f", "/app/data/profanities.json"]
+ENV PROFANITIES_FILE=/app/data/profanities.json
+
+ENTRYPOINT ["python", "-m", "app"]
