@@ -65,8 +65,7 @@ help:
 run:
 	docker run --rm -t --net=host -v $$(pwd):/data -w /data --entrypoint /bin/sh python:3.9-slim \
 			-c 'pip install -r requirements.txt && \
-				GRPC_VERBOSITY=debug \
-				PYTHONPATH=${SOURCE_DIR} python -m app -f data/profanities.json'
+				PYTHONPATH=${SOURCE_DIR} python -m app'
 
 ngrok:
 	@which ngrok || (echo "ngrok is not installed" ; exit 1)

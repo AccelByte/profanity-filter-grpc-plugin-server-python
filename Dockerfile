@@ -33,6 +33,8 @@ RUN python -m pip install -r requirements.txt
 COPY src .
 COPY --from=proto /build/src/app/proto src/app/proto
 
+COPY data data
+
 # Plugin arch gRPC server port
 EXPOSE 6565
 # Prometheus /metrics web server port
