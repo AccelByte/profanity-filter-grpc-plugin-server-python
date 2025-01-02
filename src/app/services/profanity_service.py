@@ -27,6 +27,8 @@ class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
         ] = None,
         logger: Optional[Logger] = None,
     ) -> None:
+        if not extra_profane_word_dictionaries:
+            extra_profane_word_dictionaries = {}
         custom_words = [
             word
             for language, words in extra_profane_word_dictionaries.items()
