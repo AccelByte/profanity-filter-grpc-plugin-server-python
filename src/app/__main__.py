@@ -55,7 +55,6 @@ async def main(**kwargs) -> None:
     )
 
     port: int = env.int("PORT", DEFAULT_APP_PORT)
-    profanities_file = env.str("PROFANITIES_FILE", None)
 
     opts = []
     logger = logging.getLogger("app")
@@ -112,15 +111,9 @@ async def main(**kwargs) -> None:
         opts.append(AppGRPCInterceptorOpt(MetricsServerInterceptor()))
 
     # register Filter Service
-    extra_profane_word_dictionaries = None
-    if profanities_file is not None:
-        profanities_file = Path(profanities_file)
-        if profanities_file.exists():
-            extra_profane_word_dictionaries = json.load(profanities_file.open())
     opts.append(
         AppGRPCServiceOpt(
             AsyncProfanityFilterService(
-                extra_profane_word_dictionaries=extra_profane_word_dictionaries,
                 logger=logger,
             ),
             AsyncProfanityFilterService.full_name,

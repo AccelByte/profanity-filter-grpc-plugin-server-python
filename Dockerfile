@@ -4,11 +4,11 @@
 
 FROM --platform=$BUILDPLATFORM rvolosatovs/protoc:4.1.0 AS proto
 WORKDIR /build
-COPY src/app/proto src/app/proto
-RUN protoc --proto_path=app/proto=src/app/proto \
-        --python_out=src \
-        --grpc-python_out=src \
-        src/app/proto/*.proto
+COPY src/app/proto app/proto
+RUN protoc --proto_path=app/proto=app/proto \
+        --python_out=app \
+        --grpc-python_out=app \
+        app/proto/*.proto
 
 # Extend App
 FROM ubuntu:22.04
@@ -31,15 +31,11 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN python -m pip install -r requirements.txt
 COPY src .
-COPY --from=proto /build/src/app/proto src/app/proto
-
-COPY data data
+COPY --from=proto /build/app/proto app/proto
 
 # Plugin arch gRPC server port
 EXPOSE 6565
 # Prometheus /metrics web server port
 EXPOSE 8080
-
-ENV PROFANITIES_FILE=/app/data/profanities.json
 
 ENTRYPOINT ["python", "-m", "app"]

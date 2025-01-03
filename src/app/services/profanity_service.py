@@ -27,17 +27,23 @@ class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
         ] = None,
         logger: Optional[Logger] = None,
     ) -> None:
-        if not extra_profane_word_dictionaries:
-            extra_profane_word_dictionaries = {}
-        custom_words = [
-            word
-            for language, words in extra_profane_word_dictionaries.items()
-            for word in words
-        ]
+        censor_words = []
+        if extra_profane_word_dictionaries:
+            censor_words.extend(
+                word
+                for language, words in extra_profane_word_dictionaries.items()
+                for word in words
+            )
+        else:
+            censor_words.extend(self.get_default_censor_words())
 
         self.filter = profanity
-        self.filter.add_censor_words(custom_words=custom_words)
+        self.filter.add_censor_words(custom_words=censor_words)
         self.logger = logger
+
+    # noinspection PyMethodMayBeStatic
+    def get_default_censor_words(self) -> List[str]:
+        return ["bad", "ibad", "yourbad"]
 
     async def Validate(self, request, context):
         self.log_payload(f"{self.Validate.__name__} request: %s", request)
