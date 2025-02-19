@@ -7,12 +7,6 @@ VENV_DIR = venv
 IMAGE_NAME := $(shell basename "$$(pwd)")-app
 BUILDER := extend-builder
 
-setup:
-	rm -rf ${VENV_DIR}
-	python3.9 -m venv ${VENV_DIR} \
-			&& ${VENV_DIR}/${PIP_EXEC_PATH} install --upgrade pip \
-			&& ${VENV_DIR}/${PIP_EXEC_PATH} install -r requirements.txt
-
 clean:
 	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_grpc.py
 	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_pb2.py
