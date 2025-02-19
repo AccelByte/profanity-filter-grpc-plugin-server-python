@@ -97,21 +97,20 @@ your own logic for the custom functions.
          ...
          ```
 
-   d. JDK 17
+   d. Python 3.10
 
       - On Linux Ubuntu:
 
-         To install from the Ubuntu repository, run: `sudo apt update && sudo apt install openjdk-17-jdk`.
+         To install from the Ubuntu repository, run `sudo apt update && sudo apt install python3 python3-venv`.
 
       - On Windows or macOS:
 
-         Follow Microsoft's documentation for [installing the Microsoft Build for OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/install).
+         Use the available installer [here](https://www.python.org/downloads/).
 
          ```
-         java --version
+         python3 --version
 
-         openjdk 17.0.10 2024-01-16
-         ...
+         Python 3.10.12
          ```
 
    e. Curl
