@@ -50,12 +50,12 @@ beautify:
 		${TESTS_DIR}
 
 test:
-	docker run --rm -t -v $$(pwd):/data -w /data --entrypoint /bin/sh python:3.9-slim \
+	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e HOME=/tmp --entrypoint /bin/sh python:3.9-slim \
 			-c 'pip install -r requirements.txt && \
 				PYTHONPATH=${TESTS_DIR}:${SOURCE_DIR} python -m app_tests'
 
 run:
-	docker run --rm -t --net=host -v $$(pwd):/data -w /data --entrypoint /bin/sh python:3.9-slim \
+	docker run --rm -t -u $$(id -u):$$(id -g) --net=host -v $$(pwd):/data -w /data -e HOME=/tmp --entrypoint /bin/sh python:3.9-slim \
 			-c 'pip install -r requirements.txt && \
 				PYTHONPATH=${SOURCE_DIR} python -m app'
 
