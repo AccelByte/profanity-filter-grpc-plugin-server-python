@@ -1,14 +1,11 @@
 PIP_EXEC_PATH = bin/pip
 PROTO_DIR = app/proto
-PYTHON_EXEC_PATH = bin/python
 SOURCE_DIR = src
 TESTS_DIR = tests
 VENV_DIR = venv
 
 IMAGE_NAME := $(shell basename "$$(pwd)")-app
 BUILDER := extend-builder
-
-TEST_SAMPLE_CONTAINER_NAME := sample-override-test
 
 setup:
 	rm -rf ${VENV_DIR}
