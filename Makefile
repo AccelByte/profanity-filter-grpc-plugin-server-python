@@ -54,11 +54,6 @@ test:
 			-c 'pip install -r requirements.txt && \
 				PYTHONPATH=${TESTS_DIR}:${SOURCE_DIR} python -m app_tests'
 
-help:
-	docker run --rm -t -v $$(pwd):/data -w /data --entrypoint /bin/sh python:3.9-slim \
-			-c 'pip install -r requirements.txt && \
-				PYTHONPATH=${SOURCE_DIR} python -m app --help'
-
 run:
 	docker run --rm -t --net=host -v $$(pwd):/data -w /data --entrypoint /bin/sh python:3.9-slim \
 			-c 'pip install -r requirements.txt && \
