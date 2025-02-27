@@ -3,11 +3,9 @@
 # and restrictions contact your company contract manager.
 
 import asyncio
-import json
 import logging
 
 from enum import IntFlag
-from pathlib import Path
 
 from environs import Env
 
@@ -30,6 +28,8 @@ from accelbyte_grpc_plugin.opts.grpc_reflection import GRPCReflectionOpt
 from accelbyte_grpc_plugin.opts.prometheus import PrometheusOpt
 from accelbyte_grpc_plugin.opts.zipkin import ZipkinOpt
 
+from accelbyte_grpc_plugin.utils import create_env, instrument_sdk_http_client
+
 from app.services.profanity_service import AsyncProfanityFilterService
 
 DEFAULT_APP_PORT: int = 6565
@@ -43,16 +43,7 @@ class PermissionAction(IntFlag):
 
 
 async def main(**kwargs) -> None:
-    env = Env(
-        eager=kwargs.get("env_eager", True),
-        expand_vars=kwargs.get("env_expand_vars", False),
-    )
-    env.read_env(
-        path=kwargs.get("env_path", None),
-        recurse=kwargs.get("env_recurse", True),
-        verbose=kwargs.get("env_verbose", False),
-        override=kwargs.get("env_override", False),
-    )
+    env = create_env(**kwargs)
 
     port: int = env.int("PORT", DEFAULT_APP_PORT)
 
@@ -84,25 +75,28 @@ async def main(**kwargs) -> None:
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
             from accelbyte_py_sdk.services.auth import login_client, LoginClientTimer
 
-            resource = env("RESOURCE", None)
-            action = env.int("ACTION", None)
-
             config = MyConfigRepository(base_url, client_id, client_secret, namespace)
             token = InMemoryTokenRepository()
+
             sdk = AccelByteSDK()
             sdk.initialize(options={"config": config, "token": token})
+
+            instrument_sdk_http_client(sdk=sdk, logger=logger)
+
             result, error = login_client(sdk=sdk)
             if error:
                 raise Exception(str(error))
+
             sdk.timer = LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
-            token_validator = CachingTokenValidator(sdk)
-            auth_server_interceptor = AuthorizationServerInterceptor(
-                token_validator=token_validator,
-                resource=resource,
-                action=action,
-                namespace=namespace,
+
+            opts.opts.append(
+                AppGRPCInterceptorOpt(
+                    interceptor=AuthorizationServerInterceptor(
+                        namespace=namespace,
+                        token_validator=CachingTokenValidator(sdk=sdk),
+                    )
+                )
             )
-            opts.append(AppGRPCInterceptorOpt(auth_server_interceptor))
 
     if env.bool("PLUGIN_GRPC_SERVER_LOGGING_ENABLED", False):
         opts.append(AppGRPCInterceptorOpt(DebugLoggingServerInterceptor(logger)))
