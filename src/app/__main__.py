@@ -89,7 +89,7 @@ async def main(**kwargs) -> None:
 
             sdk.timer = LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
 
-            opts.opts.append(
+            opts.append(
                 AppGRPCInterceptorOpt(
                     interceptor=AuthorizationServerInterceptor(
                         namespace=namespace,
