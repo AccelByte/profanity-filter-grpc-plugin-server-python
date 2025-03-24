@@ -7,13 +7,16 @@ from logging import Logger
 from typing import Collection, Dict, List, Optional
 
 from google.protobuf.json_format import MessageToDict
+
 from better_profanity import profanity
 
-from app.proto.profanityFilter_pb2 import (
+from accelbyte_py_sdk import AccelByteSDK
+
+from ..proto.profanityFilter_pb2 import (
     ExtendProfanityValidationResponse,
     DESCRIPTOR,
 )
-from app.proto.profanityFilter_pb2_grpc import ProfanityFilterServiceServicer
+from ..proto.profanityFilter_pb2_grpc import ProfanityFilterServiceServicer
 
 
 class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
@@ -25,6 +28,7 @@ class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
         extra_profane_word_dictionaries: Optional[
             Dict[Optional[str], Collection[str]]
         ] = None,
+        sdk: Optional[AccelByteSDK] = None,
         logger: Optional[Logger] = None,
     ) -> None:
         censor_words = []
@@ -39,6 +43,7 @@ class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
 
         self.filter = profanity
         self.filter.add_censor_words(custom_words=censor_words)
+        self.sdk = sdk
         self.logger = logger
 
     # noinspection PyMethodMayBeStatic
