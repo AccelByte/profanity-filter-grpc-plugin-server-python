@@ -78,8 +78,8 @@ async def main(**kwargs) -> None:
 
     sdk.timer = auth_service.LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
 
-    options = create_options(sdk=sdk, env=env, logger=logger)
-    options.append(
+    opts = create_options(sdk=sdk, env=env, logger=logger)
+    opts.append(
         AppGRPCServiceOpt(
             service=AsyncProfanityFilterService(
                 sdk=sdk,
@@ -90,7 +90,7 @@ async def main(**kwargs) -> None:
         )
     )
 
-    app = App(port=port, env=env, logger=logger, options=options)
+    app = App(port=port, env=env, logger=logger, opts=opts)
     await app.run()
 
 
