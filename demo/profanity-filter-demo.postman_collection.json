@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "1ddd8a2a-8c10-4051-b661-2bc7b88c6f39",
+		"_postman_id": "3ba9242f-41d4-4827-b44b-9248a9790cce",
 		"name": "Profanity Filter Demo",
 		"description": "This `collection` requires an `environment` with the following variables.\n\n- `AB_BASE_URL`\n- `AB_NAMESPACE`\n- `AB_CLIENT_ID`\n- `AB_CLIENT_SECRET`\n- `EXTEND_APP_NAME` if you deployed your Extend App to AccelByte Gaming Services;\n    - or `GRPC_SERVER_URL` if you're using Ngrok to expose a locally hosted Extend App (ex: `9.tcp.ap.ngrok.io:99999`)\n\nYou will need following permissions for the IAM Client.  \nFor AGS Private Cloud customers:\n\n- `ADMIN:NAMESPACE:{namespace}:PROFANITY:FILTER [UPDATE,DELETE]`\n- `ADMIN:NAMESPACE:{namespace}:PROFANITY [READ]`\n    \n\nFor AGS Shared Cloud customers:\n\n- Profanity Filter -> Filter (Update, Delete)\n- Profanity Filter -> Filter Profane (Read)\n    \n\nMake sure you have deployed Extend Service Extension app. Get `EXTEND_APP_NAME` from extend app page in admin portal. For local deployment, use local url instead.\n\nPlease read [getting started with profanity filter customization](https://docs.accelbyte.io/gaming-services/services/extend/override/getting-started-with-profanity-filter-customization/) for more information.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "17100405"
+		"_exporter_id": "16846723"
 	},
 	"item": [
 		{
@@ -72,45 +72,15 @@
 			"response": []
 		},
 		{
-			"name": "20-delete-profanity-filter",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{CLIENT_ACCESS_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{AB_BASE_URL}}/profanity-filter/v1/admin/namespaces/{{AB_NAMESPACE}}/filters/{{TEST_FILTER_NAME}}",
-					"host": [
-						"{{AB_BASE_URL}}"
-					],
-					"path": [
-						"profanity-filter",
-						"v1",
-						"admin",
-						"namespaces",
-						"{{AB_NAMESPACE}}",
-						"filters",
-						"{{TEST_FILTER_NAME}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "21-create-profanity-filter",
+			"name": "20-create-profanity-filter",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"const filterName = \"profanity-filter-demo_\" + Math.floor(Date.now() / 1000)",
+							"pm.collectionVariables.set('TEST_FILTER_NAME', filterName)",
+							"",
 							"let requestBody = {",
 							"    description: \"A profanity filter created for the Profanity Filter Demo.\"",
 							"};",
@@ -399,7 +369,7 @@
 		},
 		{
 			"key": "TEST_FILTER_NAME",
-			"value": "profanityFilterDemo",
+			"value": "profanity_filter_demo",
 			"type": "string"
 		}
 	]
