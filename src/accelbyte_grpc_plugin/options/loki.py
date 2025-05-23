@@ -4,7 +4,7 @@
 
 import logging_loki
 
-from accelbyte_grpc_plugin import App, AppOptABC
+from src.accelbyte_grpc_plugin.app import App, AppOptABC
 
 
 class LokiOpt(AppOptABC):

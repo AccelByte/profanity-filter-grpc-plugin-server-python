@@ -17,11 +17,11 @@ from accelbyte_py_sdk.core import (
 )
 from accelbyte_py_sdk.services import auth as auth_service
 
-from accelbyte_grpc_plugin import (
+from accelbyte_grpc_plugin.app import (
     App,
-    AppOpt,
-    AppGRPCInterceptorOpt,
-    AppGRPCServiceOpt,
+    AppOption,
+    AppOptionGRPCInterceptor,
+    AppOptionGRPCService,
 )
 from accelbyte_grpc_plugin.utils import instrument_sdk_http_client
 
@@ -80,51 +80,51 @@ async def main(**kwargs) -> None:
 
     opts = create_options(sdk=sdk, env=env, logger=logger)
     opts.append(
-        AppGRPCServiceOpt(
+        AppOptionGRPCService(
             service=AsyncProfanityFilterService(
                 sdk=sdk,
                 logger=logger,
             ),
-            service_full_name=AsyncProfanityFilterService.full_name,
-            add_service_func=add_ProfanityFilterServiceServicer_to_server,
+            full_name=AsyncProfanityFilterService.full_name,
+            add_service_fn=add_ProfanityFilterServiceServicer_to_server,
         )
     )
 
-    app = App(port=port, env=env, logger=logger, opts=opts)
+    app = App(port=port, env=env, logger=logger, options=opts)
     await app.run()
 
 
-def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
-    options: List[AppOpt] = []
+def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOption]:
+    options: List[AppOption] = []
 
     with env.prefixed("AB_"):
         namespace = env.str("NAMESPACE", DEFAULT_AB_NAMESPACE)
 
     with env.prefixed("ENABLE_"):
         if env.bool("HEALTH_CHECK", env.bool("HEALTH_CHECKING", DEFAULT_ENABLE_HEALTH_CHECK)):
-            from accelbyte_grpc_plugin.opts.grpc_health_checking import (
-                GRPCHealthCheckingOpt,
+            from accelbyte_grpc_plugin.options.grpc_health_check import (
+                AppOptionGRPCHealthCheck,
             )
 
-            options.append(GRPCHealthCheckingOpt())
+            options.append(AppOptionGRPCHealthCheck())
         if env.bool("PROMETHEUS", DEFAULT_ENABLE_PROMETHEUS):
-            from accelbyte_grpc_plugin.opts.prometheus import (
-                PrometheusOpt
+            from accelbyte_grpc_plugin.options.prometheus import (
+                AppOptionPrometheus
             )
 
-            options.append(PrometheusOpt())
+            options.append(AppOptionPrometheus())
         if env.bool("REFLECTION", DEFAULT_ENABLE_REFLECTION):
-            from accelbyte_grpc_plugin.opts.grpc_reflection import (
-                GRPCReflectionOpt,
+            from accelbyte_grpc_plugin.options.grpc_reflection import (
+                AppOptionGRPCReflection,
             )
 
-            options.append(GRPCReflectionOpt())
+            options.append(AppOptionGRPCReflection())
         if env.bool("ZIPKIN", DEFAULT_ENABLE_ZIPKIN):
-            from accelbyte_grpc_plugin.opts.zipkin import (
-                ZipkinOpt
+            from accelbyte_grpc_plugin.options.zipkin import (
+                AppOptionZipkin
             )
 
-            options.append(ZipkinOpt())
+            options.append(AppOptionZipkin())
 
     with env.prefixed("PLUGIN_GRPC_SERVER_"):
         with env.prefixed("AUTH_"):
@@ -133,7 +133,7 @@ def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
                 from accelbyte_grpc_plugin.interceptors.authorization import AuthorizationServerInterceptor
 
                 options.append(
-                    AppGRPCInterceptorOpt(
+                    AppOptionGRPCInterceptor(
                         interceptor=AuthorizationServerInterceptor(
                             token_validator=CachingTokenValidator(sdk=sdk),
                             resource=env.str(
@@ -152,7 +152,7 @@ def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
             )
 
             options.append(
-                AppGRPCInterceptorOpt(
+                AppOptionGRPCInterceptor(
                     interceptor=DebugLoggingServerInterceptor(logger=logger)
                 )
             )
@@ -163,7 +163,7 @@ def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
             )
 
             options.append(
-                AppGRPCInterceptorOpt(interceptor=MetricsServerInterceptor())
+                AppOptionGRPCInterceptor(interceptor=MetricsServerInterceptor())
             )
 
     return options
