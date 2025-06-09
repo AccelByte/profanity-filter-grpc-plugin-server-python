@@ -1,7 +1,6 @@
 PIP_EXEC_PATH = bin/pip
 PROTO_DIR = app/proto
 SOURCE_DIR = src
-TESTS_DIR = tests
 VENV_DIR = venv
 
 IMAGE_NAME := $(shell basename "$$(pwd)")-app
@@ -40,13 +39,7 @@ imagex_push:
 
 beautify:
 	docker run -t --rm -u $$(id -u):$$(id -g) -v $$(pwd):/data/ -w /data/ cytopia/black:22-py3.9 \
-		${SOURCE_DIR} \
-		${TESTS_DIR}
-
-test:
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e HOME=/tmp --entrypoint /bin/sh python:3.9-slim \
-			-c 'pip install -r requirements.txt && \
-				PYTHONPATH=${TESTS_DIR}:${SOURCE_DIR} python -m app_tests'
+		${SOURCE_DIR}
 
 run:
 	docker run --rm -t -u $$(id -u):$$(id -g) --net=host -v $$(pwd):/data -w /data -e HOME=/tmp --entrypoint /bin/sh python:3.9-slim \
