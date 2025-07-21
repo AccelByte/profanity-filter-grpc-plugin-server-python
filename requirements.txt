@@ -16,7 +16,7 @@ better-profanity==0.7.0
 protobuf==3.19.4
 python-logging-loki==0.3.1
 
-accelbyte-py-sdk
+accelbyte-py-sdk==0.77.0
 bitarray
 httpx[http2]
 mmh3
