@@ -26,7 +26,7 @@ from accelbyte_grpc_plugin.app import (
 )
 from accelbyte_grpc_plugin.utils import instrument_sdk_http_client
 
-from .proto.profanityFilter_pb2_grpc import add_ProfanityFilterServiceServicer_to_server
+from profanityFilter_pb2_grpc import add_ProfanityFilterServiceServicer_to_server
 from .services.profanity_service import AsyncProfanityFilterService
 from .utils import create_env
 

@@ -1,28 +1,26 @@
-PIP_EXEC_PATH = bin/pip
-PROTO_DIR = app/proto
-SOURCE_DIR = src
-VENV_DIR = venv
+# Copyright (c) 2025 AccelByte Inc. All Rights Reserved.
+# This is licensed software from AccelByte Inc, for limitations
+# and restrictions contact your company contract manager.
 
-IMAGE_NAME := $(shell basename "$$(pwd)")-app
+SHELL := /bin/bash
+
+IMAGE_NAME ?= $(shell basename "$$(pwd)")-app
 BUILDER := extend-builder
 
-clean:
-	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_grpc.py
-	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_pb2.py
-	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_pb2.pyi
-	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_pb2_grpc.py
+.PHONY: proto build
 
-proto: clean
-	docker run -t --rm -u $$(id -u):$$(id -g) -v $$(pwd):/data/ -w /data/ rvolosatovs/protoc:4.0.0 \
-		--proto_path=${PROTO_DIR}=${SOURCE_DIR}/${PROTO_DIR} \
-		--python_out=${SOURCE_DIR} \
-		--grpc-python_out=${SOURCE_DIR} \
-		${SOURCE_DIR}/${PROTO_DIR}/*.proto
+proto:
+	docker run --tty --rm --user $$(id -u):$$(id -g) \
+		--volume $$(pwd):/build \
+		--workdir /build \
+		--entrypoint /bin/bash \
+		rvolosatovs/protoc:4.1.0 \
+			proto.sh
 
 build: proto
 
 image:
-	docker buildx build -t ${IMAGE_NAME} --load .
+	docker build -t ${IMAGE_NAME} -f Dockerfile .
 
 imagex:
 	docker buildx inspect $(BUILDER) || docker buildx create --name $(BUILDER) --use
@@ -36,15 +34,6 @@ imagex_push:
 	docker buildx inspect $(BUILDER) || docker buildx create --name $(BUILDER) --use
 	docker buildx build -t ${REPO_URL}:${IMAGE_TAG} --platform linux/amd64 --push .
 	docker buildx rm --keep-state $(BUILDER)
-
-beautify:
-	docker run -t --rm -u $$(id -u):$$(id -g) -v $$(pwd):/data/ -w /data/ cytopia/black:22-py3.9 \
-		${SOURCE_DIR}
-
-run:
-	docker run --rm -t -u $$(id -u):$$(id -g) --net=host -v $$(pwd):/data -w /data -e HOME=/tmp --entrypoint /bin/sh python:3.9-slim \
-			-c 'pip install -r requirements.txt && \
-				PYTHONPATH=${SOURCE_DIR} python -m app'
 
 ngrok:
 	@which ngrok || (echo "ngrok is not installed" ; exit 1)

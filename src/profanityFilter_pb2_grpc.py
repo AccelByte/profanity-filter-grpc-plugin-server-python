@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from app.proto import profanityFilter_pb2 as app_dot_proto_dot_profanityFilter__pb2
+import profanityFilter_pb2 as profanityFilter__pb2
 
 
 class ProfanityFilterServiceStub(object):
@@ -16,8 +16,8 @@ class ProfanityFilterServiceStub(object):
         """
         self.Validate = channel.unary_unary(
                 '/accelbyte.profanityfilter.registered.v1.ProfanityFilterService/Validate',
-                request_serializer=app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationRequest.SerializeToString,
-                response_deserializer=app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationResponse.FromString,
+                request_serializer=profanityFilter__pb2.ExtendProfanityValidationRequest.SerializeToString,
+                response_deserializer=profanityFilter__pb2.ExtendProfanityValidationResponse.FromString,
                 )
 
 
@@ -35,8 +35,8 @@ def add_ProfanityFilterServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Validate': grpc.unary_unary_rpc_method_handler(
                     servicer.Validate,
-                    request_deserializer=app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationRequest.FromString,
-                    response_serializer=app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationResponse.SerializeToString,
+                    request_deserializer=profanityFilter__pb2.ExtendProfanityValidationRequest.FromString,
+                    response_serializer=profanityFilter__pb2.ExtendProfanityValidationResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,7 +60,7 @@ class ProfanityFilterService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/accelbyte.profanityfilter.registered.v1.ProfanityFilterService/Validate',
-            app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationRequest.SerializeToString,
-            app_dot_proto_dot_profanityFilter__pb2.ExtendProfanityValidationResponse.FromString,
+            profanityFilter__pb2.ExtendProfanityValidationRequest.SerializeToString,
+            profanityFilter__pb2.ExtendProfanityValidationResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

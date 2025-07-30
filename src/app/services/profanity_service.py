@@ -12,11 +12,11 @@ from better_profanity import profanity
 
 from accelbyte_py_sdk import AccelByteSDK
 
-from ..proto.profanityFilter_pb2 import (
+from profanityFilter_pb2 import (
     ExtendProfanityValidationResponse,
     DESCRIPTOR,
 )
-from ..proto.profanityFilter_pb2_grpc import ProfanityFilterServiceServicer
+from profanityFilter_pb2_grpc import ProfanityFilterServiceServicer
 
 
 class AsyncProfanityFilterService(ProfanityFilterServiceServicer):
