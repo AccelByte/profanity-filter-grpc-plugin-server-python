@@ -137,7 +137,6 @@ your own logic for the custom functions.
 
    a. Base URL
 
-      - Sample URL for AGS Shared Cloud customers: `https://spaceshooter.prod.gamingservices.accelbyte.io`
       - Sample URL for AGS Private Cloud customers:  `https://dev.accelbyte.io`
 
    b. [Create a Game Namespace](https://docs.accelbyte.io/gaming-services/services/access/reference/namespaces/manage-your-namespaces/) if you don't have one yet. Keep the `Namespace ID`.
@@ -260,9 +259,6 @@ To test the app, which runs locally with AGS, the `gRPC server` needs to be conn
     - For AGS Private Cloud customers:
         - `ADMIN:NAMESPACE:{namespace}:PROFANITY:FILTER [UPDATE,DELETE]`
         - `ADMIN:NAMESPACE:{namespace}:PROFANITY [READ]`
-    - For AGS Shared Cloud customers:
-        - Profanity Filter -> Filter (Update, Delete)
-        - Profanity Filter -> Filter Profane (Read)
 
    > :warning: **Oauth Client created in this step is different from the one from Prerequisites section:** It is required by the Postman collection in the next step to register the `gRPC Server` URL and also to create and delete test users.
 
