@@ -13,7 +13,6 @@ services:
       - PLUGIN_GRPC_SERVER_AUTH_ENABLED
       - GRPC_VERBOSITY=debug
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://host.docker.internal:9411/api/v2/spans
-      - OTEL_SERVICE_NAME=ProfanityFilterGrpcPluginServerPython
     extra_hosts:
       - host.docker.internal:host-gateway
     # logging:
